@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Game Center • Sports Arena</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body class="theme-game">
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <a href="index.html" class="brand-mark" title="Back to home" aria-label="Back to home">🏟️</a>
+        <span class="brand-name">Sports Arena • Game Center</span>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html#live">Live Now</a>
+        <a href="index.html#records">Records</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero" style="min-height: 36vh;">
+    <div class="hero-media" role="img" aria-label="Game background"></div>
+    <div class="container hero-inner">
+      <h1 id="gcTitle">Game Center</h1>
+      <p class="muted" id="gcSubtitle"></p>
+    </div>
+  </section>
+
+  <main class="container section">
+    <div id="gcTabs" class="filters" role="tablist" aria-label="Game sections"></div>
+    <div id="gcContent" class="gc-content" aria-live="polite"></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>Enjoy the game!</span>
+      <a href="index.html" class="muted">Back to Home</a>
+    </div>
+  </footer>
+
+  <!-- Cache busting to ensure latest script loads during dev -->
+  <script src="assets/game.js?v=vertical-labels-1" type="module"></script>
+</body>
+</html>

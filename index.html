@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sports Arena</title>
+  <meta name="description" content="Live sports hub with personalized interests, records, and highlights." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="brand-mark">🏟️</span>
+        <span class="brand-name">Sports Arena</span>
+      </div>
+      <nav class="main-nav">
+        <a href="#live">Live Now</a>
+        <a href="#records">Records</a>
+        <button id="editInterestsBtn" class="btn btn-ghost" aria-haspopup="dialog">Your Interests</button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-media" role="img" aria-label="Stadium with fans cheering"></div>
+    <div class="container hero-inner">
+      <h1>All Your Sports, One Arena</h1>
+      <p>Personalize your feed, catch every live moment, and explore iconic records across sports.</p>
+      <div class="hero-actions">
+        <button id="getStartedBtn" class="btn btn-primary">Get Started</button>
+        <a href="#live" class="btn btn-light">See Live Games</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <section id="live" class="section">
+      <div class="section-head">
+        <h2>Live Games</h2>
+        <div id="filters" class="filters" aria-label="Filter by sport" role="tablist"></div>
+      </div>
+      <div id="liveGrid" class="cards-grid" aria-live="polite"></div>
+    </section>
+
+    <section id="records" class="section">
+      <div class="section-head">
+        <h2>Records & Milestones</h2>
+        <p class="muted">Explore standout achievements across different sports.</p>
+      </div>
+      <div id="recordsGrid" class="records-grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>Built with ❤️ for sports fans</span>
+      <span class="muted">Demo data for preview purposes</span>
+    </div>
+  </footer>
+
+  <!-- Interests Modal -->
+  <dialog id="interestsModal" class="modal" aria-labelledby="interestsTitle">
+    <form method="dialog" class="modal-content">
+      <h3 id="interestsTitle">Choose Your Sports</h3>
+      <p class="muted">We’ll show these first on your feed. You can change this anytime.</p>
+      <div id="interestsList" class="interests-list"></div>
+      <div class="modal-actions">
+        <button value="cancel" class="btn btn-ghost">Cancel</button>
+        <button id="saveInterestsBtn" value="default" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="assets/app.js" type="module"></script>
+</body>
+</html>
