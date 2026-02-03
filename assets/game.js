@@ -1372,8 +1372,9 @@ function renderHeaderScoreCard(game) {
       const line = el('div', 'score-line');
       const strong = el('strong', null, `${inn.runs}/${inn.wickets}`);
       line.appendChild(strong);
-      line.appendChild(el('span', 'gc-subtle', ` (${formatOvers(inn.overs)})`));
       meta.appendChild(line);
+      const overs = el('div', 'score-overs gc-subtle', `(${formatOvers(inn.overs)})`);
+      meta.appendChild(overs);
       if (logoRight) { wrap.appendChild(meta); wrap.appendChild(logo); }
       else { wrap.appendChild(logo); wrap.appendChild(meta); }
       return wrap;

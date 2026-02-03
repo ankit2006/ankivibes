@@ -28,7 +28,7 @@ export const LIVE_GAMES = [
     league: 'IPL',
     homeTeam: 'Mumbai',
     awayTeam: 'Chennai',
-    status: { state: 'upcoming', clock: 'Today 19:30', period: null },
+    status: { state: 'final', clock: 'Mumbai 182/6 beat Chennai 176/8', period: null },
     image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=1974&auto=format&fit=crop',
   },
   {

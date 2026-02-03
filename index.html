@@ -67,14 +67,25 @@
   </footer>
 
   <!-- Interests Modal -->
-  <dialog id="interestsModal" class="modal" aria-labelledby="interestsTitle">
+  <dialog id="interestsModal" class="modal" aria-labelledby="interestsTitle" aria-describedby="interestsDesc">
     <form method="dialog" class="modal-content">
-      <h3 id="interestsTitle">Choose Your Sports</h3>
-      <p class="muted">We’ll show these first on your feed. You can change this anytime.</p>
-      <div id="interestsList" class="interests-list"></div>
+      <div class="modal-head">
+        <div class="modal-icon" aria-hidden="true">✨</div>
+        <div class="modal-titles">
+          <h3 id="interestsTitle">Choose Your Sports</h3>
+          <p id="interestsDesc" class="muted">We’ll prioritize these on your feed. You can change this anytime.</p>
+        </div>
+      </div>
+      <div id="interestsList" class="interests-list" role="group" aria-label="Sports choices"></div>
       <div class="modal-actions">
-        <button value="cancel" class="btn btn-ghost">Cancel</button>
-        <button id="saveInterestsBtn" value="default" class="btn btn-primary">Save</button>
+        <div class="modal-actions-left">
+          <button id="clearInterestsBtn" value="reset" class="btn btn-ghost" type="button">Clear</button>
+          <button id="selectAllInterestsBtn" value="selectall" class="btn btn-ghost" type="button">Select All</button>
+        </div>
+        <div class="modal-actions-right">
+          <button value="cancel" class="btn btn-ghost">Cancel</button>
+          <button id="saveInterestsBtn" value="default" class="btn btn-primary">Save</button>
+        </div>
       </div>
     </form>
   </dialog>

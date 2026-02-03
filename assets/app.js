@@ -6,7 +6,7 @@ const THEME_KEY = 'sportsArena.theme.v1';
 
 // Background images per sport (Unsplash direct links). Values are plain URLs (no url()).
 const SPORT_BG = {
-  All: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=2000&auto=format&fit=crop',
+  All: 'https://th.bing.com/th/id/OIP.V4xg8zeAWuB1u0OGS5uC0QAAAA?w=259&h=180&c=7&r=0&o=7&dpr=2.1&pid=1.7&rm=3',
   Soccer: 'https://images.unsplash.com/photo-1486286701208-1d58e9338013?q=80&w=2000&auto=format&fit=crop',
   Basketball: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=2000&auto=format&fit=crop',
   Cricket: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?q=80&w=2000&auto=format&fit=crop',
@@ -17,6 +17,9 @@ const SPORT_BG = {
   Rugby: 'https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?q=80&w=2000&auto=format&fit=crop',
   F1: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2000&auto=format&fit=crop',
 };
+
+// Helper: curated collage set for the "All" view
+const COLLAGE_SPORTS = ['Soccer','Basketball','Cricket','Tennis','American Football','Hockey','Baseball','Rugby','F1'];
 
 function getInterests() {
   try {
@@ -146,7 +149,9 @@ function renderGames(container, games) {
     card.setAttribute('aria-label', `${g.sport} ${g.homeTeam} vs ${g.awayTeam}`);
     const media = el('div', 'card-media');
     media.style.backgroundImage = `url(${g.image})`;
-    const badge = el('span', `badge ${g.status.state === 'live' ? 'live' : 'upcoming'}`, g.status.state.toUpperCase());
+    const state = (g.status && g.status.state) || 'upcoming';
+    const stateClass = state === 'live' ? 'live' : (state === 'final' ? 'final' : 'upcoming');
+    const badge = el('span', `badge ${stateClass}`, state.toUpperCase());
     media.appendChild(badge);
     const body = el('div', 'card-body');
     const title = el('h3', 'card-title', `${g.homeTeam} vs ${g.awayTeam}`);
@@ -190,18 +195,29 @@ function openInterestsModal() {
   const list = document.getElementById('interestsList');
   list.innerHTML = '';
   const saved = new Set(getInterests());
+  // If first-time user, preselect top sports by presence in LIVE_GAMES
+  let preselect = new Set();
+  if (saved.size === 0) {
+    const counts = new Map();
+    LIVE_GAMES.forEach(g => counts.set(g.sport, (counts.get(g.sport) || 0) + 1));
+    const sports = uniqueSports().slice().sort((a, b) => (counts.get(b) || 0) - (counts.get(a) || 0));
+    preselect = new Set(sports.slice(0, 3));
+  }
   uniqueSports().forEach(s => {
     const label = el('label', 'interest-item');
     const input = document.createElement('input');
     input.type = 'checkbox';
     input.value = s;
-    input.checked = saved.has(s);
+    input.checked = saved.has(s) || preselect.has(s);
     const span = el('span', null, s);
     label.appendChild(input);
     label.appendChild(span);
     list.appendChild(label);
   });
   dialog.showModal();
+  // Focus first control for accessibility
+  const firstInput = list.querySelector('input[type="checkbox"]');
+  if (firstInput) firstInput.focus();
 }
 
 function saveInterestsFromModal() {
@@ -235,6 +251,8 @@ function init() {
       });
     }
   const saveInterestsBtn = document.getElementById('saveInterestsBtn');
+  const selectAllBtn = document.getElementById('selectAllInterestsBtn');
+  const clearBtn = document.getElementById('clearInterestsBtn');
   const heroMediaEl = document.querySelector('.hero-media');
   // Ensure fade overlay exists for cross-fade transitions
   let fadeLayer = heroMediaEl ? heroMediaEl.querySelector('.fade-bg') : null;
@@ -265,10 +283,50 @@ function init() {
     return `linear-gradient(to bottom, rgba(11,14,20,0.6), rgba(11,14,20,0.9)), url('${url}')`;
   }
 
+  function composeGradientOnly() {
+    return 'linear-gradient(to bottom, rgba(11,14,20,0.6), rgba(11,14,20,0.9))';
+  }
+
+  function buildHeroCollage(urls) {
+    if (!heroMediaEl) return;
+    let collage = heroMediaEl.querySelector('.hero-collage');
+    if (!collage) {
+      collage = document.createElement('div');
+      collage.className = 'hero-collage';
+      collage.setAttribute('aria-hidden', 'true');
+      heroMediaEl.appendChild(collage);
+    }
+    collage.innerHTML = '';
+    const tiles = urls.slice(0, 6);
+    tiles.forEach((u, i) => {
+      const t = document.createElement('div');
+      t.className = `tile t${i+1}`;
+      t.style.backgroundImage = `url(${u})`;
+      collage.appendChild(t);
+    });
+    // Ensure gradient-only base behind collage for readability
+    heroMediaEl.style.backgroundImage = composeGradientOnly();
+    heroMediaEl.style.backgroundPosition = 'center';
+    heroMediaEl.style.backgroundSize = 'cover';
+    heroMediaEl.style.backgroundRepeat = 'no-repeat';
+    if (fadeLayer) fadeLayer.style.opacity = '0';
+  }
+
+  function removeHeroCollage() {
+    if (!heroMediaEl) return;
+    const collage = heroMediaEl.querySelector('.hero-collage');
+    if (collage) collage.remove();
+  }
+
   function updateHeroBackground(sport) {
     if (!heroMediaEl) return;
+    // For "All", use the provided single-image background
+    if (sport === 'All') {
+      removeHeroCollage();
+    }
+
     const primaryUrl = heroImageForSport(sport);
-    const fallbackUrl = (sport && sport !== 'All') ? (LIVE_GAMES.find(g => g.sport === sport && g.image)?.image || SPORT_BG.All) : SPORT_BG.All;
+    const fallbackUrl = LIVE_GAMES.find(g => g.sport === sport && g.image)?.image || SPORT_BG.All;
 
     const applyBg = (url) => {
       // If fade layer exists, cross-fade
@@ -349,6 +407,23 @@ function init() {
 
   editBtn.addEventListener('click', openInterestsModal);
   getStartedBtn.addEventListener('click', openInterestsModal);
+
+  if (selectAllBtn) {
+    selectAllBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const dialog = document.getElementById('interestsModal');
+      const boxes = dialog.querySelectorAll('input[type="checkbox"]');
+      boxes.forEach(b => { b.checked = true; });
+    });
+  }
+  if (clearBtn) {
+    clearBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const dialog = document.getElementById('interestsModal');
+      const boxes = dialog.querySelectorAll('input[type="checkbox"]');
+      boxes.forEach(b => { b.checked = false; });
+    });
+  }
 
   saveInterestsBtn.addEventListener('click', (e) => {
     e.preventDefault();
