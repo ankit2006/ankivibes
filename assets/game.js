@@ -26,6 +26,40 @@ function el(tag, cls, text) {
   return e;
 }
 
+// Theme utilities (duplicated minimal set for game page)
+const THEME_KEY = 'sportsArena.theme.v1';
+function getTheme() {
+  try {
+    const t = localStorage.getItem(THEME_KEY);
+    if (t === 'light' || t === 'dark') return t;
+  } catch {}
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return prefersDark ? 'dark' : 'light';
+}
+function applyTheme(theme) {
+  const root = document.documentElement;
+  root.setAttribute('data-theme', theme);
+  if (theme === 'dark') {
+    root.classList.add('dark');
+  } else {
+    root.classList.remove('dark');
+  }
+  const btn = document.getElementById('themeToggleBtn');
+  if (btn) {
+    const isDark = theme === 'dark';
+    btn.setAttribute('aria-pressed', String(isDark));
+    const icon = btn.querySelector('.icon');
+    const label = btn.querySelector('.label');
+    if (icon) icon.textContent = isDark ? '☀️' : '🌙';
+    if (label) label.textContent = isDark ? 'Light' : 'Dark';
+    btn.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+  }
+}
+function setTheme(theme) {
+  try { localStorage.setItem(THEME_KEY, theme); } catch {}
+  applyTheme(theme);
+}
+
 function avatarUrl(name, size = 64) {
   const clean = (name || '').replace(/\s*\((C|WK)\)/g, '').trim();
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(clean)}&background=1a2130&color=e6e9ef&size=${size}&bold=true`;
@@ -109,6 +143,8 @@ function renderTabs(container, sport) {
   const tabs = [];
   if (sport === 'Cricket') {
     tabs.push('Captains', 'Scorecard', 'Commentary', 'Videos', 'Worm', 'Run Rate', 'Partnerships', 'Playing XI', 'Info');
+  } else if (sport === 'Soccer') {
+    tabs.push('Overview', 'Stats', 'Commentary', 'Lineups', 'Videos', 'Info');
   } else {
     tabs.push('Overview', 'Lineups');
   }
@@ -349,6 +385,16 @@ function buildWagonTooltip(gameId, player) {
 
 function renderScorecard(root, id) {
   const d = GAME_DETAILS[id];
+    // Theme toggle wiring
+    applyTheme(getTheme());
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const next = (document.documentElement.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
+        setTheme(next);
+      });
+    }
   const inns = d?.innings || [];
   if (!inns.length) return root.appendChild(el('div', 'muted', 'No scorecard available.'));
 
@@ -1126,10 +1172,22 @@ function renderAllSections(contentEl, game) {
 
     const info = buildSection(contentEl, slug('Info'), 'Info');
     renderInfo(info, game.id);
+  } else if (game.sport === 'Soccer') {
+    const ov = buildSection(contentEl, slug('Overview'), 'Overview');
+    renderOverview(ov, game);
+    const stats = buildSection(contentEl, slug('Stats'), 'Stats');
+    renderSoccerStats(stats, game.id);
+    const comm = buildSection(contentEl, slug('Commentary'), 'Commentary');
+    renderSoccerCommentary(comm, game.id);
+    const lu = buildSection(contentEl, slug('Lineups'), 'Lineups');
+    renderSoccerLineups(lu, game.id);
+    const vids = buildSection(contentEl, slug('Videos'), 'Videos');
+    renderVideos(vids, game.id);
+    const info = buildSection(contentEl, slug('Info'), 'Info');
+    renderInfo(info, game.id);
   } else {
     const ov = buildSection(contentEl, slug('Overview'), 'Overview');
     renderOverview(ov, game);
-
     const lu = buildSection(contentEl, slug('Lineups'), 'Lineups');
     renderLineups(lu, game);
   }
@@ -1184,6 +1242,78 @@ function renderVideos(root, id) {
   root.appendChild(wrap);
 }
 
+function renderSoccerStats(root, id) {
+  const d = GAME_DETAILS[id];
+  const s = d?.stats;
+  if (!s) { root.appendChild(el('div', 'muted', 'No stats available.')); return; }
+  const grid = el('div', 'soc-stats');
+  function card(title, leftVal, rightVal, isPercent = false) {
+    const c = el('div', 'stat-card');
+    c.appendChild(el('div', 'stat-title', title));
+    const rows = el('div', 'stat-bars');
+    const row = el('div', 'stat-row');
+    const l = el('div', null, String(isPercent ? leftVal + '%' : leftVal));
+    const bar = el('div', 'bar');
+    const span = el('span');
+    const pct = isPercent ? leftVal : (leftVal / Math.max(1, leftVal + rightVal)) * 100;
+    span.style.width = Math.max(5, Math.min(100, Math.round(pct))) + '%';
+    bar.appendChild(span);
+    const r = el('div', null, String(isPercent ? rightVal + '%' : rightVal));
+    row.appendChild(l); row.appendChild(bar); row.appendChild(r);
+    rows.appendChild(row);
+    c.appendChild(rows);
+    return c;
+  }
+  grid.appendChild(card('Possession', s.possession.home, s.possession.away, true));
+  grid.appendChild(card('Shots', s.shots.home, s.shots.away));
+  grid.appendChild(card('On Target', s.shotsOnTarget.home, s.shotsOnTarget.away));
+  grid.appendChild(card('Passes', s.passes.home, s.passes.away));
+  grid.appendChild(card('Corners', s.corners.home, s.corners.away));
+  grid.appendChild(card('Fouls', s.fouls.home, s.fouls.away));
+  grid.appendChild(card('Yellow Cards', s.yellow.home, s.yellow.away));
+  grid.appendChild(card('Red Cards', s.red.home, s.red.away));
+  root.appendChild(grid);
+}
+
+function renderSoccerCommentary(root, id) {
+  const list = GAME_DETAILS[id]?.commentaryTimeline || [];
+  if (!list.length) { root.appendChild(el('div', 'muted', 'No commentary yet.')); return; }
+  const box = el('div', 'soc-timeline');
+  list.forEach(ev => {
+    const item = el('div', 'soc-event');
+    item.appendChild(el('div', 'soc-minute', `${ev.minute}'`));
+    item.appendChild(el('div', null, ev.text));
+    box.appendChild(item);
+  });
+  root.appendChild(box);
+}
+
+function renderSoccerLineups(root, id) {
+  const lu = GAME_DETAILS[id]?.lineups;
+  if (!lu) { root.appendChild(el('div', 'muted', 'Lineups will appear here.')); return; }
+  const grid = el('div', 'soc-lineups');
+  Object.entries(lu).forEach(([team, data]) => {
+    const card = el('div', 'soc-lineup-card');
+    const head = el('div', 'record-title-row');
+    head.appendChild(createTeamBadge(team));
+    const h = el('h3', 'record-title', team);
+    head.appendChild(h);
+    card.appendChild(head);
+    card.appendChild(el('div', 'soc-formation', `Formation: ${data.formation}`));
+    const list = el('div', 'soc-players');
+    (data.players || []).forEach(p => {
+      const row = el('div', 'soc-player');
+      const img = document.createElement('img'); img.className = 'avatar'; img.alt = `${p} avatar`; img.src = playerImageUrl(id, p, 64);
+      const name = document.createElement('strong'); name.textContent = p;
+      row.appendChild(img); row.appendChild(name);
+      list.appendChild(row);
+    });
+    card.appendChild(list);
+    grid.appendChild(card);
+  });
+  root.appendChild(grid);
+}
+
 function renderCaptains(root, id) {
   const squads = GAME_DETAILS[id]?.squads || {};
   const box = el('div', 'gc-captains');
@@ -1228,38 +1358,52 @@ function renderHeaderScoreCard(game) {
   const heroInner = document.querySelector('.hero-inner');
   if (!heroInner) return;
   const d = GAME_DETAILS[game.id] || {};
-  const inns = d.innings || [];
-  if (!inns.length) return;
-
   const card = el('div', 'score-card');
 
-  const teamBlock = (teamName, logoRight = false) => {
-    const inn = inns.find(i => i.team === teamName) || { team: teamName, runs: '-', wickets: '-', overs: '-' };
-    const wrap = el('div', 'score-team' + (logoRight ? ' right' : ''));
-    const logo = createTeamLogoImg(game.id, inn.team);
-    const meta = el('div', 'score-meta');
-    meta.appendChild(el('div', 'score-name', inn.team));
-    const line = el('div', 'score-line');
-    const strong = el('strong', null, `${inn.runs}/${inn.wickets}`);
-    line.appendChild(strong);
-    line.appendChild(el('span', 'gc-subtle', ` (${formatOvers(inn.overs)})`));
-    meta.appendChild(line);
-    if (logoRight) {
-      wrap.appendChild(meta);
-      wrap.appendChild(logo);
-    } else {
-      wrap.appendChild(logo);
-      wrap.appendChild(meta);
-    }
-    return wrap;
-  };
-
-  card.appendChild(teamBlock(game.homeTeam, false));
-  card.appendChild(el('div', 'score-sep', '—'));
-  card.appendChild(teamBlock(game.awayTeam, true));
-
-  const result = d.info?.result;
-  if (result) card.appendChild(el('div', 'score-result gc-subtle', result));
+  if (game.sport === 'Cricket') {
+    const inns = d.innings || [];
+    if (!inns.length) return;
+    const teamBlock = (teamName, logoRight = false) => {
+      const inn = inns.find(i => i.team === teamName) || { team: teamName, runs: '-', wickets: '-', overs: '-' };
+      const wrap = el('div', 'score-team' + (logoRight ? ' right' : ''));
+      const logo = createTeamLogoImg(game.id, inn.team);
+      const meta = el('div', 'score-meta');
+      meta.appendChild(el('div', 'score-name', inn.team));
+      const line = el('div', 'score-line');
+      const strong = el('strong', null, `${inn.runs}/${inn.wickets}`);
+      line.appendChild(strong);
+      line.appendChild(el('span', 'gc-subtle', ` (${formatOvers(inn.overs)})`));
+      meta.appendChild(line);
+      if (logoRight) { wrap.appendChild(meta); wrap.appendChild(logo); }
+      else { wrap.appendChild(logo); wrap.appendChild(meta); }
+      return wrap;
+    };
+    card.appendChild(teamBlock(game.homeTeam, false));
+    card.appendChild(el('div', 'score-sep', '—'));
+    card.appendChild(teamBlock(game.awayTeam, true));
+    const result = d.info?.result;
+    if (result) card.appendChild(el('div', 'score-result gc-subtle', result));
+  } else if (game.sport === 'Soccer') {
+    const sc = d.soccer || {};
+    const teamBlock = (teamName, goals, logoRight = false) => {
+      const wrap = el('div', 'score-team' + (logoRight ? ' right' : ''));
+      const logo = createTeamLogoImg(game.id, teamName);
+      const meta = el('div', 'score-meta');
+      meta.appendChild(el('div', 'score-name', teamName));
+      const line = el('div', 'score-line');
+      line.appendChild(el('strong', null, String(goals ?? '-')));
+      meta.appendChild(line);
+      if (logoRight) { wrap.appendChild(meta); wrap.appendChild(logo); }
+      else { wrap.appendChild(logo); wrap.appendChild(meta); }
+      return wrap;
+    };
+    card.appendChild(teamBlock(game.homeTeam, sc?.score?.home));
+    card.appendChild(el('div', 'score-sep', '—'));
+    card.appendChild(teamBlock(game.awayTeam, sc?.score?.away, true));
+    const minute = sc?.score?.minute; const phase = sc?.score?.phase || '';
+    const result = d.info?.result || (minute ? `${minute}' ${phase}` : '');
+    if (result) card.appendChild(el('div', 'score-result gc-subtle', result));
+  }
 
   heroInner.appendChild(card);
 }
@@ -1276,7 +1420,17 @@ function renderPlayerOfTheMatch(root, id) {
   img.alt = `${cleanName(potm.name)} photo`;
   img.src = playerImageUrl(id, potm.name, 96);
   const meta = el('div', 'meta');
-  meta.appendChild(el('strong', null, cleanName(potm.name)));
+  // Use a shorter display name on very small screens
+  const shortName = (full) => {
+    const clean = cleanName(full);
+    const parts = clean.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) return `${parts[0][0]}. ${parts[parts.length - 1]}`; // R. Sharma
+    return clean;
+  };
+  const display = (window.matchMedia && window.matchMedia('(max-width: 480px)').matches)
+    ? shortName(potm.name)
+    : cleanName(potm.name);
+  meta.appendChild(el('strong', null, display));
   const teamRow = el('div', 'team-row');
   teamRow.appendChild(createTeamBadge(potm.team, 'sm'));
   const subtitle = ['Player of the Match', potm.stats].filter(Boolean).join(' • ');

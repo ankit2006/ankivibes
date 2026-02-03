@@ -358,4 +358,63 @@ export const GAME_DETAILS = {
       'M. Santner': 'https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&auto=format&fit=crop&crop=faces&w=240&h=240'
     },
   },
+  // Soccer example (LaLiga-style)
+  s1: {
+    info: {
+      venue: 'Reale Arena, San Sebastián',
+      referee: 'Referee: Alejandro Hernández',
+      timings: 'Kickoff 20:00 local',
+      result: ''
+    },
+    soccer: {
+      score: { home: 1, away: 2, minute: 72, phase: '2H' },
+      goals: [
+        { team: 'Barcelona', player: 'R. Lewandowski', minute: 34 },
+        { team: 'Real Sociedad', player: 'M. Oyarzabal', minute: 51 },
+        { team: 'Barcelona', player: 'Pedri', minute: 68 }
+      ],
+      cards: [
+        { team: 'Real Sociedad', player: 'I. Zubeldia', minute: 42, type: 'yellow' },
+        { team: 'Barcelona', player: 'Gavi', minute: 59, type: 'yellow' }
+      ]
+    },
+    stats: {
+      possession: { home: 47, away: 53 },
+      shots: { home: 12, away: 15 },
+      shotsOnTarget: { home: 5, away: 7 },
+      passes: { home: 412, away: 476 },
+      corners: { home: 6, away: 5 },
+      fouls: { home: 10, away: 8 },
+      yellow: { home: 2, away: 3 },
+      red: { home: 0, away: 0 }
+    },
+    lineups: {
+      'Real Sociedad': {
+        formation: '4-3-3',
+        players: [
+          'A. Remiro (GK)', 'A. Elustondo', 'R. Le Normand', 'I. Zubeldia', 'A. Muñoz',
+          'M. Merino', 'B. Méndez', 'T. Kubo', 'M. Oyarzabal (C)', 'A. Sorloth', 'O. Sadiq'
+        ]
+      },
+      'Barcelona': {
+        formation: '4-3-3',
+        players: [
+          'M. ter Stegen (GK)', 'J. Koundé', 'R. Araújo', 'I. Martínez', 'A. Balde',
+          'F. de Jong', 'Gavi', 'Pedri', 'Raphinha', 'R. Lewandowski (C)', 'Ferran Torres'
+        ]
+      }
+    },
+    commentaryTimeline: [
+      { minute: 5, text: 'Early pressure from Barcelona, corner won.' },
+      { minute: 21, text: 'Shot from Oyarzabal, saved by ter Stegen.' },
+      { minute: 34, text: 'GOAL! Lewandowski finishes low to the far post.' },
+      { minute: 51, text: 'GOAL! Oyarzabal equalizes with a curled finish.' },
+      { minute: 68, text: 'GOAL! Pedri taps in after a cutback from Raphinha.' },
+      { minute: 72, text: 'Substitution: Ferran Torres on for Raphinha.' }
+    ],
+    teamLogos: {
+      'Real Sociedad': 'https://upload.wikimedia.org/wikipedia/en/1/1e/Real_Sociedad_logo.svg',
+      'Barcelona': 'https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg'
+    }
+  },
 };

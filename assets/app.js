@@ -2,6 +2,7 @@ import { LIVE_GAMES, RECORDS, SPORTS } from './data.js';
 
 const STORAGE_KEY = 'sportsArena.interests.v1';
 const SELECTED_SPORT_KEY = 'sportsArena.selectedSport.v1';
+const THEME_KEY = 'sportsArena.theme.v1';
 
 // Background images per sport (Unsplash direct links). Values are plain URLs (no url()).
 const SPORT_BG = {
@@ -65,6 +66,39 @@ function el(tag, cls, text) {
   if (cls) e.className = cls;
   if (text) e.textContent = text;
   return e;
+}
+
+// Theme utilities
+function getTheme() {
+  try {
+    const t = localStorage.getItem(THEME_KEY);
+    if (t === 'light' || t === 'dark') return t;
+  } catch {}
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return prefersDark ? 'dark' : 'light';
+}
+function applyTheme(theme) {
+  const root = document.documentElement;
+  root.setAttribute('data-theme', theme);
+  if (theme === 'dark') {
+    root.classList.add('dark');
+  } else {
+    root.classList.remove('dark');
+  }
+  const btn = document.getElementById('themeToggleBtn');
+  if (btn) {
+    const isDark = theme === 'dark';
+    btn.setAttribute('aria-pressed', String(isDark));
+    const icon = btn.querySelector('.icon');
+    const label = btn.querySelector('.label');
+    if (icon) icon.textContent = isDark ? '☀️' : '🌙';
+    if (label) label.textContent = isDark ? 'Light' : 'Dark';
+    btn.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+  }
+}
+function setTheme(theme) {
+  try { localStorage.setItem(THEME_KEY, theme); } catch {}
+  applyTheme(theme);
 }
 
 function renderFilters(container, sports, selected) {
@@ -190,6 +224,16 @@ function init() {
   const editBtn = document.getElementById('editInterestsBtn');
   const getStartedBtn = document.getElementById('getStartedBtn');
   const dialog = document.getElementById('interestsModal');
+  const themeBtn = document.getElementById('themeToggleBtn');
+    // Theme: apply from preference and wire toggle
+    applyTheme(getTheme());
+    if (themeBtn) {
+      themeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const next = (document.documentElement.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
+        setTheme(next);
+      });
+    }
   const saveInterestsBtn = document.getElementById('saveInterestsBtn');
   const heroMediaEl = document.querySelector('.hero-media');
   // Ensure fade overlay exists for cross-fade transitions
