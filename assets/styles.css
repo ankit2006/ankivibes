@@ -61,7 +61,8 @@ body {
 :root.dark .site-header { background: rgba(18,24,34,0.75); }
 .header-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: 0.4px; }
-.brand-mark { font-size: 20px; }
+.brand-mark { display: inline-grid; place-items: center; }
+.brand-mark .brand-icon { width: 22px; height: 22px; display: block; color: var(--text); }
 .brand-name { font-size: 18px; }
 .main-nav { display: flex; gap: 16px; align-items: center; }
 .main-nav a { color: var(--text); text-decoration: none; opacity: 0.9; }

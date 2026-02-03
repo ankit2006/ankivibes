@@ -1,6 +1,6 @@
 // Dummy data for live games and records
 export const SPORTS = [
-  'Soccer', 'Basketball', 'Baseball', 'Tennis', 'Cricket', 'American Football', 'Hockey', 'Rugby', 'F1'
+  'Soccer', 'Basketball', 'Baseball', 'Tennis', 'Cricket', 'Football', 'Hockey', 'Rugby', 'F1'
 ];
 
 export const LIVE_GAMES = [
@@ -38,16 +38,16 @@ export const LIVE_GAMES = [
     homeTeam: 'S. Williams',
     awayTeam: 'N. Osaka',
     status: { state: 'live', clock: 'Set 2 4-3', period: 'S2' },
-    image: 'https://images.unsplash.com/photo-1552072092-7f9b8d63efcb?q=80&w=1976&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1542144582-1ba00456b5e3?q=80&w=1976&auto=format&fit=crop',
   },
   {
     id: 's5',
-    sport: 'American Football',
+    sport: 'Football',
     league: 'NFL',
     homeTeam: 'Eagles',
     awayTeam: 'Cowboys',
     status: { state: 'upcoming', clock: 'Sun 16:25', period: null },
-    image: 'https://images.unsplash.com/photo-1518600506278-4e8ef466b810?q=80&w=1974&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1450121982620-84a745035fa8?q=80&w=1974&auto=format&fit=crop',
   },
   {
     id: 's6',
@@ -56,7 +56,7 @@ export const LIVE_GAMES = [
     homeTeam: 'Maple Leafs',
     awayTeam: 'Canadiens',
     status: { state: 'live', clock: '3rd 11:12', period: 'P3' },
-    image: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=1974&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1586348274214-06dfb3c8bbb4?q=80&w=1974&auto=format&fit=crop',
   },
   {
     id: 's7',
@@ -74,7 +74,7 @@ export const LIVE_GAMES = [
     homeTeam: 'England',
     awayTeam: 'France',
     status: { state: 'live', clock: 'H2 23:38', period: 'H2' },
-    image: 'https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?q=80&w=1974&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1566577739254-faaafa7b4fa7?q=80&w=1974&auto=format&fit=crop',
   },
   {
     id: 's9',
@@ -83,7 +83,7 @@ export const LIVE_GAMES = [
     homeTeam: 'Grand Prix',
     awayTeam: '—',
     status: { state: 'live', clock: 'Lap 34/57', period: 'Race' },
-    image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1974&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1652090379496-4219a00c8ebf?q=80&w=1974&auto=format&fit=crop',
   },
 ];
 
@@ -114,21 +114,21 @@ export const RECORDS = [
     sport: 'Tennis',
     title: 'Most Grand Slam Singles Titles',
     description: 'Longevity and consistency on every surface across eras.',
-    image: 'https://images.unsplash.com/photo-1521417531039-96a1761dc9a3?q=80&w=1974&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1542144582-1ba00456b5e3?q=80&w=1974&auto=format&fit=crop',
   },
   {
     id: 'r5',
-    sport: 'American Football',
+    sport: 'Football',
     title: 'Most Career Passing Yards',
     description: 'Precision and durability at the sport’s most demanding position.',
-    image: 'https://images.unsplash.com/photo-1529864896617-714e8b16d9a0?q=80&w=1974&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1450121982620-84a745035fa8?q=80&w=1974&auto=format&fit=crop',
   },
   {
     id: 'r6',
     sport: 'Hockey',
     title: 'Single-Season Goals Record',
     description: 'A prolific scoring pace that remains a gold standard.',
-    image: 'https://images.unsplash.com/photo-1546527868-ccb7ee7dfa6a?q=80&w=1974&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1586348274214-06dfb3c8bbb4?q=80&w=1974&auto=format&fit=crop',
   }
 ];
 

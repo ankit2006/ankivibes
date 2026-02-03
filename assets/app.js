@@ -10,16 +10,16 @@ const SPORT_BG = {
   Soccer: 'https://images.unsplash.com/photo-1486286701208-1d58e9338013?q=80&w=2000&auto=format&fit=crop',
   Basketball: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=2000&auto=format&fit=crop',
   Cricket: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?q=80&w=2000&auto=format&fit=crop',
-  Tennis: 'https://images.unsplash.com/photo-1552072092-7f9b8d63efcb?q=80&w=2000&auto=format&fit=crop',
-  'American Football': 'https://images.unsplash.com/photo-1518600506278-4e8ef466b810?q=80&w=2000&auto=format&fit=crop',
-  Hockey: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=2000&auto=format&fit=crop',
-  Baseball: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=2000&auto=format&fit=crop',
-  Rugby: 'https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?q=80&w=2000&auto=format&fit=crop',
-  F1: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2000&auto=format&fit=crop',
+  Tennis: 'https://images.unsplash.com/photo-1542144582-1ba00456b5e3?q=80&w=2000&auto=format&fit=crop',
+  Football: 'https://images.unsplash.com/photo-1450121982620-84a745035fa8?q=80&w=2000&auto=format&fit=crop&v=2',
+  Hockey: 'https://images.unsplash.com/photo-1586348274214-06dfb3c8bbb4?q=80&w=2000&auto=format&fit=crop',
+  Baseball: 'https://images.unsplash.com/photo-1471295253337-3ceaaedca402?q=80&w=1974&auto=format&fit=crop',
+  Rugby: 'https://images.unsplash.com/photo-1566577739254-faaafa7b4fa7?q=80&w=2000&auto=format&fit=crop',
+  F1: 'https://images.unsplash.com/photo-1652090379496-4219a00c8ebf?q=80&w=2000&auto=format&fit=crop',
 };
 
 // Helper: curated collage set for the "All" view
-const COLLAGE_SPORTS = ['Soccer','Basketball','Cricket','Tennis','American Football','Hockey','Baseball','Rugby','F1'];
+const COLLAGE_SPORTS = ['Soccer','Basketball','Cricket','Tennis','Football','Hockey','Baseball','Rugby','F1'];
 
 function getInterests() {
   try {
@@ -148,7 +148,9 @@ function renderGames(container, games) {
     card.setAttribute('tabindex', '0');
     card.setAttribute('aria-label', `${g.sport} ${g.homeTeam} vs ${g.awayTeam}`);
     const media = el('div', 'card-media');
-    media.style.backgroundImage = `url(${g.image})`;
+    // Force sport-specific imagery to avoid mismatches
+    const imgUrl = SPORT_BG[g.sport] || g.image;
+    media.style.backgroundImage = `url(${imgUrl})`;
     const state = (g.status && g.status.state) || 'upcoming';
     const stateClass = state === 'live' ? 'live' : (state === 'final' ? 'final' : 'upcoming');
     const badge = el('span', `badge ${stateClass}`, state.toUpperCase());
