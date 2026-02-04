@@ -80,8 +80,8 @@ export const LIVE_GAMES = [
     id: 's9',
     sport: 'F1',
     league: 'World Championship',
-    homeTeam: 'Grand Prix',
-    awayTeam: '—',
+    homeTeam: 'Australian Grand Prix',
+    awayTeam: '',
     status: { state: 'live', clock: 'Lap 34/57', period: 'Race' },
     image: 'https://images.unsplash.com/photo-1652090379496-4219a00c8ebf?q=80&w=1974&auto=format&fit=crop',
   },
@@ -149,6 +149,19 @@ export const GAME_DETAILS = {
       name: 'J. Bumrah',
       team: 'Mumbai',
       stats: '3/28 (4.0)'
+    },
+    // Records broken (demo metadata)
+    recordsBroken: {
+      'R. Sharma': {
+        title: 'Most ODI hundreds',
+        summary: 'R. Sharma set a new benchmark with maximum hundreds in ODIs.',
+        type: 'bat'
+      },
+      'J. Bumrah': {
+        title: 'Best figures in an IPL match',
+        summary: 'J. Bumrah achieved the most wickets in an IPL innings for his team.',
+        type: 'bowl'
+      }
     },
     // Two innings, each with batting, extras, total, fall of wickets, and opposition bowling
     innings: [

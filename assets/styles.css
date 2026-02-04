@@ -261,6 +261,10 @@ body {
 .wagon-icon { margin-left: 2px; display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 4px; border: none; background: transparent; color: var(--muted); cursor: pointer; vertical-align: middle; }
 .wagon-icon:hover, .wagon-icon:focus { color: var(--text); outline: 2px solid rgba(27,114,255,0.25); outline-offset: 2px; }
 .wagon-tooltip { position: absolute; left: 54px; top: 36px; z-index: 5; background: var(--surface); border: 1px solid var(--ring); border-radius: 12px; padding: 10px; box-shadow: 0 12px 24px rgba(0,0,0,0.12); width: 300px; display: grid; grid-template-columns: 160px 1fr; gap: 10px; }
+.record-icon { margin-left: 6px; display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 4px; border: none; background: transparent; color: var(--accent); cursor: pointer; vertical-align: middle; }
+.record-icon:hover, .record-icon:focus { color: var(--text); outline: 2px solid rgba(229,72,77,0.25); outline-offset: 2px; }
+.record-tooltip { position: absolute; left: 54px; top: 36px; z-index: 6; background: var(--surface); border: 1px solid var(--ring); border-radius: 12px; padding: 10px; box-shadow: 0 12px 24px rgba(0,0,0,0.12); width: 260px; display: grid; gap: 6px; }
+.record-title { font-weight: 700; }
 .wagon-title { font-weight: 700; margin-bottom: 4px; }
 .wagon-svg { width: 100%; height: auto; display: block; }
 .wagon-side { display: grid; align-content: start; gap: 6px; }

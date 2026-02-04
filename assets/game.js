@@ -194,8 +194,10 @@ function renderInningsScorecard(block, id, inn) {
     const nameEl = document.createElement('strong');
     nameEl.textContent = p.name;
     const wagon = createWagonIcon(id, p);
+    const recordIcon = createRecordIcon(id, p);
     nameRow.appendChild(nameEl);
     nameRow.appendChild(wagon);
+    if (recordIcon) nameRow.appendChild(recordIcon);
     meta.appendChild(nameRow);
     meta.appendChild(el('div', 'gc-subtle', p.dismissal));
     wrap.appendChild(img);
@@ -248,14 +250,21 @@ function renderInningsScorecard(block, id, inn) {
     inn.bowling.forEach(b => {
       const tr = document.createElement('tr');
       const econ = fmt2(b.econ);
-      tr.innerHTML = `
-        <td>${b.name}</td>
-        <td>${b.overs}</td>
-        <td>${b.maidens}</td>
-        <td>${b.runs}</td>
-        <td>${b.wickets}</td>
-        <td>${econ}</td>
-      `;
+      const tdBowler = document.createElement('td');
+      tdBowler.style.position = 'relative';
+      const nameWrap = el('div');
+      const strong = document.createElement('strong');
+      strong.textContent = b.name;
+      nameWrap.appendChild(strong);
+      const recIcon = createRecordIcon(id, { name: b.name, runs: null });
+      if (recIcon) nameWrap.appendChild(recIcon);
+      tdBowler.appendChild(nameWrap);
+      tr.appendChild(tdBowler);
+      tr.appendChild(el('td', null, String(b.overs)));
+      tr.appendChild(el('td', null, String(b.maidens)));
+      tr.appendChild(el('td', null, String(b.runs)));
+      tr.appendChild(el('td', null, String(b.wickets)));
+      tr.appendChild(el('td', null, econ));
       bt.appendChild(tr);
     });
     block.appendChild(bowlTable);
@@ -302,6 +311,45 @@ function getWagonSplits(gameId, playerName, runs) {
   const out = new Array(8).fill(base);
   for (let i = 0; i < rem; i++) out[i] += 1;
   return out;
+}
+
+function getPlayerRecord(gameId, playerName) {
+  const clean = cleanName(playerName);
+  const map = GAME_DETAILS[gameId]?.recordsBroken || {};
+  const rec = map[clean];
+  return rec || null;
+}
+
+function createRecordIcon(gameId, player) {
+  const rec = getPlayerRecord(gameId, player.name);
+  if (!rec) return null;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'record-icon';
+  btn.title = `${rec.title}`;
+  btn.setAttribute('aria-label', `Record: ${rec.title} for ${player.name}`);
+  // Medal/trophy glyph via inline SVG
+  btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7v3a5 5 0 0 0 5 5 5 5 0 0 0 5-5V3Z"/><path d="M7 6H5a3 3 0 0 0 3 3M17 6h2a3 3 0 0 1-3 3" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="10.5" y="14.5" width="3" height="3" rx="0.6"/><rect x="8" y="18" width="8" height="2" rx="1"/></svg>';
+
+  let tip;
+  const show = () => {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'record-tooltip';
+    const title = el('div', 'record-title', rec.title);
+    const body = el('div', 'gc-subtle', rec.summary);
+    tip.appendChild(title);
+    tip.appendChild(body);
+    const td = btn.closest('td');
+    if (!td) return;
+    td.appendChild(tip);
+  };
+  const hide = () => { if (tip) { try { tip.remove(); } catch {} tip = null; } };
+  btn.addEventListener('mouseenter', show);
+  btn.addEventListener('focus', show);
+  btn.addEventListener('mouseleave', hide);
+  btn.addEventListener('blur', hide);
+  return btn;
 }
 
 function buildWagonTooltip(gameId, player) {
